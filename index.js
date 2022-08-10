@@ -27,6 +27,10 @@ app.get('/max-values/:base', (req, res) => {
   Card.find().distinct(`base.${req.params.base}`, (err, data) => res.send(data));
 });
 
+app.get('/pokedex', (req, res) => {
+  Card.find({}, (err, data) => res.send(data));
+});
+
 app.get('/pokedex/:id', (req, res) =>
   Card.find({ id: req.params.id }, (err, data) => res.send(data)),
 );
