@@ -1,13 +1,18 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT || 3000;
 const mongoDB = process.env.CONNECT_SERVICE;
 const Card = require('./models/card');
+const Master = require('./models/master.js');
 
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.raw());
 
 mongoose.connect(mongoDB).then(console.log('All good with DB'));
 
@@ -21,6 +26,17 @@ app.get('/', (req, res) => {
 
 app.get('/types', (req, res) => {
   Card.find().distinct('type', (err, data) => res.send(data));
+});
+
+app.post('/master-auth', (req, res) => {
+  const master = req.body;
+  Master.create({ name: master.name, email: master.email }).then((message) => res.send(message));
+});
+
+app.put('/score-update', (req, res) => {
+  Master.updateOne({ name: 'Test' }, { $set: { score: 1000 } }).then((uMessage) =>
+    res.send(uMessage),
+  );
 });
 
 app.get('/max-values/:base', (req, res) => {
